@@ -2,8 +2,17 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 const worksRoutes = require("./api/routes/works");
+
+mongoose.connect(
+  "mongodb+srv://dbUser:6sbaRmajZL5BQct9@liven.ah4jh.mongodb.net/db?retryWrites=true&w=majority",
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }
+);
 
 // Apply middlewares
 app.use(morgan("dev"));
