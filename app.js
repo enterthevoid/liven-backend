@@ -13,6 +13,7 @@ mongoose.connect(
     useUnifiedTopology: true,
   }
 );
+mongoose.Promise = global.Promise;
 
 // Apply middlewares
 app.use(morgan("dev"));
