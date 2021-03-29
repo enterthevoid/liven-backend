@@ -1,6 +1,35 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, callback) {
+    callback(null, "./uploads/");
+  },
+  filename: function (req, file, callback) {
+    callback(
+      null,
+      new Date().toISOString() + file.originalname.replace(/\s/g, "")
+    );
+  },
+});
+
+const fileFilter = (req, file, callback) => {
+  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+    callback(null, true);
+  } else {
+    callback(new Error("Something went wrong"), false);
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 5,
+  },
+  fileFilter: fileFilter,
+});
 
 const Work = require("../models/work");
 
@@ -26,12 +55,13 @@ router.get("/", (req, res, next) => {
     });
 });
 
-router.post("/", (req, res, next) => {
+router.post("/", upload.single("img"), (req, res, next) => {
+  const id = new mongoose.Types.ObjectId();
   const work = new Work({
-    id: new mongoose.Types.ObjectId(),
+    id: id,
     name: req.body.name,
     description: req.body.description,
-    photos: req.body.photos,
+    photos: { img: "http://localhost:4000/" + req.file.path, workId: id },
   });
 
   work
