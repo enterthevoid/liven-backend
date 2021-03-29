@@ -1,8 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
 const multer = require("multer");
 const checkAuth = require("../auth/check-auth");
+
+// Controllers
+
+const WorksController = require("../controllers/works");
+
+// Multer configuration
 
 const storage = multer.diskStorage({
   destination: function (req, file, callback) {
@@ -32,114 +37,21 @@ const upload = multer({
   fileFilter: fileFilter,
 });
 
-const Work = require("../models/work");
+// Routes
 
-router.get("/", (req, res, next) => {
-  Work.find()
-    .select("id name description photos")
-    .exec()
-    .then((docs) => {
-      const responce = {
-        totalItemCount: docs.length,
-        works: docs.map((doc) => ({
-          id: doc._id,
-          name: doc.name,
-          description: doc.description,
-          photos: doc.photos,
-        })),
-      };
+router.get("/", WorksController.works_get_all);
 
-      res.status(200).json(responce);
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err });
-    });
-});
+router.post(
+  "/",
+  upload.array("imgs", 12),
+  checkAuth,
+  WorksController.works_create_work
+);
 
-router.post("/", upload.single("img"), checkAuth, (req, res, next) => {
-  const id = new mongoose.Types.ObjectId();
-  const work = new Work({
-    id: id,
-    name: req.body.name,
-    description: req.body.description,
-    photos: { img: "http://localhost:4000/" + req.file.path, workId: id },
-  });
+router.get("/:workId", WorksController.works_get_work_by_id);
 
-  work
-    .save()
-    .then((results) => {
-      console.log(results);
-    })
-    .catch((err) => console.log(err));
+router.patch("/:workId", checkAuth, WorksController.works_update_work);
 
-  res.status(201).json({
-    status: "Created",
-    work: {
-      id: work.id,
-      name: work.name,
-      description: work.description,
-      photos: work.photos,
-    },
-  });
-});
-
-router.get("/:workId", (req, res, next) => {
-  const id = req.params.workId;
-
-  Work.findById(id)
-    .select("id name description photos")
-    .exec()
-    .then((doc) => {
-      if (doc) {
-        res.status(200).json({
-          id: doc._id,
-          name: doc.name,
-          description: doc.description,
-          photos: doc.photos,
-        });
-      } else
-        res
-          .status(404)
-          .json({ message: "No valid entry found by provided ID" });
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err || "Dont know what happened" });
-    });
-});
-
-router.patch("/:workId", checkAuth, (req, res, next) => {
-  const id = req.params.workId;
-  const updateOps = {};
-
-  for (const ops of req.body) {
-    updateOps[ops.propName] = ops.value;
-  }
-
-  Work.update({ _id: id }, { $set: updateOps })
-    .exec()
-    .then(() => {
-      res.status(200).json({
-        status: "Created",
-      });
-    })
-    .catch((err) =>
-      res.status(500).json({
-        error: err,
-      })
-    );
-});
-
-router.delete("/:workId", checkAuth, (req, res, next) => {
-  const id = req.params.workId;
-
-  Work.remove({ _id: id })
-    .exec()
-    .then(() =>
-      res.status(200).json({
-        status: "Deleted",
-      })
-    )
-    .catch((err) => res.status(500).json({ error: err }));
-});
+router.delete("/:workId", checkAuth, WorksController.works_delete_work);
 
 module.exports = router;
