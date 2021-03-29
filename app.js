@@ -5,9 +5,12 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
 const worksRoutes = require("./api/routes/works");
+const usersRoutes = require("./api/routes/users");
 
 mongoose.connect(
-  "mongodb+srv://dbUser:6sbaRmajZL5BQct9@liven.ah4jh.mongodb.net/db?retryWrites=true&w=majority",
+  "mongodb+srv://dbUser:" +
+    process.env.MONGO_ATLAS_PW +
+    "@liven.ah4jh.mongodb.net/db?retryWrites=true&w=majority",
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -39,6 +42,7 @@ app.use((req, res, next) => {
 
 // Routes whitch should handle requests
 app.use("/works", worksRoutes);
+app.use("/user", usersRoutes);
 
 // Handling errors
 app.use((req, res, next) => {

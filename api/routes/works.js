@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const multer = require("multer");
+const checkAuth = require("../auth/check-auth");
 
 const storage = multer.diskStorage({
   destination: function (req, file, callback) {
@@ -55,7 +56,7 @@ router.get("/", (req, res, next) => {
     });
 });
 
-router.post("/", upload.single("img"), (req, res, next) => {
+router.post("/", upload.single("img"), checkAuth, (req, res, next) => {
   const id = new mongoose.Types.ObjectId();
   const work = new Work({
     id: id,
@@ -106,7 +107,7 @@ router.get("/:workId", (req, res, next) => {
     });
 });
 
-router.patch("/:workId", (req, res, next) => {
+router.patch("/:workId", checkAuth, (req, res, next) => {
   const id = req.params.workId;
   const updateOps = {};
 
@@ -128,7 +129,7 @@ router.patch("/:workId", (req, res, next) => {
     );
 });
 
-router.delete("/:workId", (req, res, next) => {
+router.delete("/:workId", checkAuth, (req, res, next) => {
   const id = req.params.workId;
 
   Work.remove({ _id: id })
