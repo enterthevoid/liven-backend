@@ -43,14 +43,19 @@ router.get("/", WorksController.works_get_all);
 
 router.post(
   "/",
-  upload.array("imgs", 12),
+  upload.array("photos", 30),
   checkAuth,
   WorksController.works_create_work
 );
 
 router.get("/:workId", WorksController.works_get_work_by_id);
 
-router.patch("/:workId", checkAuth, WorksController.works_update_work);
+router.post(
+  "/:workId",
+  upload.array("photos", 30),
+  checkAuth,
+  WorksController.works_update_work
+);
 
 router.delete("/:workId", checkAuth, WorksController.works_delete_work);
 

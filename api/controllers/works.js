@@ -58,11 +58,17 @@ exports.works_get_work_by_id = (req, res, next) => {
 
 exports.works_create_work = (req, res, next) => {
   const id = new mongoose.Types.ObjectId();
+
   const work = new Work({
     id: id,
     name: req.body.name,
     description: req.body.description,
-    photos: { img: "http://localhost:4000/" + req.file.path, workId: id },
+    photos: req.files.map((file) => {
+      return {
+        img: "http://localhost:4000/" + file.path,
+        workId: id,
+      };
+    }),
   });
 
   work
@@ -87,13 +93,34 @@ exports.works_create_work = (req, res, next) => {
 
 exports.works_update_work = (req, res, next) => {
   const id = req.params.workId;
-  const updateOps = {};
 
-  for (const ops of req.body) {
-    updateOps[ops.propName] = ops.value;
+  let oldImages = [];
+  let newFiles = [];
+
+  if (!!req.body.photos && req.body.photos.length > 0) {
+    JSON.parse(req.body.photos).forEach((photo) => {
+      if (!!photo.workId && !!photo.img) {
+        oldImages = [...oldImages, photo];
+      }
+    });
   }
 
-  Work.update({ _id: id }, { $set: updateOps })
+  if (req.files.length > 0) {
+    newFiles = req.files.map((file) => {
+      return {
+        img: "http://localhost:4000/" + file.path,
+        workId: id,
+      };
+    });
+  }
+
+  const work = {
+    name: req.body.name,
+    description: req.body.description,
+    photos: [...oldImages, ...newFiles],
+  };
+
+  Work.updateOne({ _id: id }, { $set: work })
     .exec()
     .then(() => {
       res.status(200).json({

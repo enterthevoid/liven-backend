@@ -79,6 +79,10 @@ exports.users_login = (request, res, next) => {
           return res.status(202).json({
             message: "Auth successful",
             token: token,
+            user: {
+              email: user[0].email,
+              id: user[0].id,
+            },
           });
         }
         return res.status(401).json({
