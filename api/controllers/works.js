@@ -125,6 +125,7 @@ exports.works_update_work = (req, res, next) => {
     .then(() => {
       res.status(200).json({
         status: "Updated",
+        work,
       });
     })
     .catch((err) =>
