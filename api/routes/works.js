@@ -14,12 +14,16 @@ const storage = multer.diskStorage({
     callback(null, __dirname);
   },
   filename: function (req, file, callback) {
-    callback(
-      null,
-      new Date().toISOString().replace(/:/g, "-").replace(".", "") +
+    callback(null, () => {
+      let name =
+        new Date().toISOString().replace(/:/g, "-").replace(/-/g, "-") +
         "-" +
-        file.originalname.replace(/\s/g, "").replace(" ", "_")
-    );
+        file.originalname.replace(/\s/g, "").replace(" ", "_");
+
+      console.log("=======>NAME", name);
+
+      return name;
+    });
   },
 });
 
