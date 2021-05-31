@@ -11,16 +11,14 @@ const WorksController = require("../controllers/works");
 
 const storage = multer.diskStorage({
   destination: function (req, file, callback) {
-    callback(null, __dirname);
+    callback(null, "./uploads/");
   },
   filename: function (req, file, callback) {
-    callback(null, () => {
-      let name =
-        new Date().toISOString().replace(/:|-|./g, "-") +
-        file.originalname.replace(/\s| /g, "");
-
-      return name;
-    });
+    callback(
+      null,
+      new Date().toISOString().replace(/:|-/g, "-").replace(".", "-") +
+        file.originalname.replace(/\s| /g, "")
+    );
   },
 });
 
