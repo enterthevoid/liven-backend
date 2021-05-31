@@ -2,6 +2,6 @@
   "env": {
     "MONGO_ATLAS_PW": "6sbaRmajZL5BQct9",
     "JWT_KEY": "okwefewkfpeowkfopwekfopwekfpweokfpweokfeowfkwe",
-    "API_URL": "https://gentle-forest-86099.herokuapp.com"
+    "API_URL": "https://gentle-forest-86099.herokuapp.com/"
   }
 }
