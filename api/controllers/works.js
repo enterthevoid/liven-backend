@@ -65,7 +65,7 @@ exports.works_create_work = (req, res, next) => {
     description: req.body.description,
     photos: req.files.map((file) => {
       return {
-        img: "http://localhost:4000/" + file.path,
+        img: process.env.API_URL + file.path,
         workId: id,
       };
     }),
@@ -108,7 +108,7 @@ exports.works_update_work = (req, res, next) => {
   if (req.files.length > 0) {
     newFiles = req.files.map((file) => {
       return {
-        img: "http://localhost:4000/" + file.path,
+        img: process.env.API_URL + file.path,
         workId: id,
       };
     });
