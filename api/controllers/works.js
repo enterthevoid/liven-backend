@@ -105,6 +105,26 @@ exports.works_update_work = (req, res, next) => {
     });
   }
 
+  Work.findById(id)
+    .exec()
+    .then((doc) => {
+      if (doc) {
+        let difference = doc.photos.filter((x) => !oldImages.includes(x));
+
+        difference.map((photo) => {
+          fs.unlink(photo.img, (err) => {
+            if (err) {
+              console.error("File not removed", err);
+            }
+            console.log("File removed", photo.img);
+          });
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err || "Dont know what happened" });
+    });
+
   if (req.files.length > 0) {
     newFiles = req.files.map((file) => {
       return {
@@ -139,6 +159,24 @@ exports.works_update_work = (req, res, next) => {
 
 exports.works_delete_work = (req, res, next) => {
   const id = req.params.workId;
+
+  Work.findById(id)
+    .exec()
+    .then((doc) => {
+      if (doc) {
+        doc.photos.map((photo) => {
+          fs.unlink(photo.img, (err) => {
+            if (err) {
+              console.error("File not removed", err);
+            }
+            console.log("File removed", photo.img);
+          });
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err || "Dont know what happened" });
+    });
 
   Work.remove({ _id: id })
     .exec()
