@@ -2,6 +2,6 @@
   "env": {
     "MONGO_ATLAS_PW": "6sbaRmajZL5BQct9",
     "JWT_KEY": "okwefewkfpeowkfopwekfopwekfpweokfpweokfeowfkwe",
-    "API_URL": "http://liven-backend-mgbuc.ondigitalocean.app/"
+    "API_URL": "https://liven-backend-3x6qh.ondigitalocean.app/"
   }
 }
