@@ -5,6 +5,10 @@ const fs = require("fs");
 
 const Work = require("../models/work");
 
+function getImagePath(src) {
+  return src.replace(process.env.API_URL, "");
+}
+
 // Get all works
 
 exports.works_get_all = (req, res, next) => {
@@ -113,11 +117,12 @@ exports.works_update_work = (req, res, next) => {
         let difference = doc.photos.filter((x) => !oldImages.includes(x));
 
         difference.map((photo) => {
-          fs.unlink(photo.img, (err) => {
+          fs.unlink(getImagePath(photo.img), (err) => {
             if (err) {
               console.error("File not removed", err);
+            } else {
+              console.log("File removed", photo.img);
             }
-            console.log("File removed", photo.img);
           });
         });
       }
@@ -166,11 +171,12 @@ exports.works_delete_work = (req, res, next) => {
     .then((doc) => {
       if (doc) {
         doc.photos.map((photo) => {
-          fs.unlink(photo.img, (err) => {
+          fs.unlink(getImagePath(photo.img), (err) => {
             if (err) {
               console.error("File not removed", err);
+            } else {
+              console.log("File removed", photo.img);
             }
-            console.log("File removed", photo.img);
           });
         });
       }
