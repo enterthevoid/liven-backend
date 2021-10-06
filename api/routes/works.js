@@ -17,6 +17,7 @@ const storage = multer.diskStorage({
     callback(
       null,
       new Date().toISOString().slice(0, 10) +
+        "--" +
         file.originalname.replace(/\s| /g, "")
     );
   },
@@ -44,7 +45,7 @@ router.get("/", WorksController.works_get_all);
 
 router.post(
   "/",
-  upload.array("photos", 30),
+  upload.array("photos", 15),
   checkAuth,
   WorksController.works_create_work
 );
@@ -53,7 +54,7 @@ router.get("/:workId", WorksController.works_get_work_by_id);
 
 router.post(
   "/:workId",
-  upload.array("photos", 30),
+  upload.array("photos", 15),
   checkAuth,
   WorksController.works_update_work
 );
