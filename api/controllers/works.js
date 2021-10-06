@@ -1,13 +1,10 @@
 const mongoose = require("mongoose");
 const fs = require("fs");
+const { getImagePath, comparer } = require("../helpers");
 
 // Models
 
 const Work = require("../models/work");
-
-function getImagePath(src) {
-  return src.replace(process.env.API_URL, "");
-}
 
 // Get all works
 
@@ -79,9 +76,9 @@ exports.works_create_work = (req, res, next) => {
   work
     .save()
     .then((results) => {
-      console.log(results);
+      console.log("Created", results);
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.error("Error create", err));
 
   res.status(201).json({
     status: "Created",
@@ -114,9 +111,9 @@ exports.works_update_work = (req, res, next) => {
     .exec()
     .then((doc) => {
       if (doc) {
-        let difference = doc.photos.filter((x) => !oldImages.includes(x));
+        const difference = doc.photos.filter(comparer(oldImages));
 
-        difference.map((photo) => {
+        difference.forEach((photo) => {
           fs.unlink(getImagePath(photo.img), (err) => {
             if (err) {
               console.error("File not removed", err);
@@ -170,7 +167,7 @@ exports.works_delete_work = (req, res, next) => {
     .exec()
     .then((doc) => {
       if (doc) {
-        doc.photos.map((photo) => {
+        doc.photos.forEach((photo) => {
           fs.unlink(getImagePath(photo.img), (err) => {
             if (err) {
               console.error("File not removed", err);
