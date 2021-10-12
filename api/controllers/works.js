@@ -138,6 +138,7 @@ exports.works_update_work = (req, res, next) => {
   }
 
   const work = {
+    id: id,
     name: req.body.name,
     description: req.body.description,
     photos: [...oldImages, ...newFiles],
