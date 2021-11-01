@@ -32,7 +32,6 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Headers",
     "x-www-form-urlencoded, Origin, X-Requested-With, Content-Type, Accept, Authorization, *"
   );
-  res.setHeader("Cache-Control", "no-cache");
 
   if (req.method === "OPTIONS") {
     res.header("Access-Control-Allow-Methods", "PUT , POST, PATCH, DELETE");
